@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -22,6 +26,15 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const username = await this.findUserByName(createUserDto.username);
+    const email = await this.findByEmail(createUserDto.email);
+    if (username !== null) {
+      throw new ForbiddenException('Такое имя пользователя существует');
+    }
+    if (email) {
+      throw new ForbiddenException('Существует пользователь с таким email');
+    }
+
     createUserDto.password = await this.hashPassword(createUserDto?.password);
     const user = this.userRepository.create(createUserDto);
     return this.userRepository.save(user);
@@ -58,7 +71,7 @@ export class UsersService {
       const username = await this.findMany(updateUserDto.username);
 
       if (username) {
-        throw new BadRequestException('Такое имя пользователя существует');
+        throw new ConflictException('Такое имя пользователя существует');
       }
     }
 
@@ -66,7 +79,7 @@ export class UsersService {
       const useremail = await this.findMany(updateUserDto.email);
 
       if (useremail) {
-        throw new BadRequestException('Существует пользователь с таким email');
+        throw new ConflictException('Существует пользователь с таким email');
       }
     }
   }

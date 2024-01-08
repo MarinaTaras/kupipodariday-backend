@@ -122,4 +122,9 @@ export class WishesService {
       [key]: param,
     });
   }
+
+  //увеличение суммы сбора на "хотелку"
+  async updateRaised(id: number, newRaised: number) {
+    return await this.wishRepository.update({ id: id }, { raised: newRaised });
+  }
 }

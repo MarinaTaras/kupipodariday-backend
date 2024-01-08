@@ -21,11 +21,11 @@ export class Offer {
   @UpdateDateColumn({ type: Date, default: '2023-12-30T16:00:16.633Z' })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.offers)
-  user: User;
+  @ManyToOne(() => User, (user) => user.username)
+  user: User; //содержит id желающего скинуться
 
-  @ManyToOne(() => Wish, (wish) => wish.offers)
-  item: Wish;
+  @ManyToOne(() => Wish, (wish) => wish.link)
+  item: Wish; //ссылка на товар
 
   @Column({ scale: 2, type: 'numeric' })
   amount: number;
